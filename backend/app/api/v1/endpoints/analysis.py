@@ -1,7 +1,7 @@
 """
 Code analysis API endpoints
 """
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, HTTPException, status, BackgroundTasks
 from datetime import datetime
 
 from app.schemas.analysis import (
@@ -13,19 +13,50 @@ from app.schemas.analysis import (
     ClassInfo
 )
 from app.utils.storage import storage
+from app.services.code_analyzer import CodeAnalyzer
 
 router = APIRouter()
 
+# Initialize code analyzer
+analyzer = CodeAnalyzer()
 
-@router.post("/{project_id}/analyze", response_model=AnalysisResponse)
-async def analyze_project(project_id: str):
+
+def perform_analysis(project_id: str, repo_url: str):
+    """Background task to perform code analysis."""
+    try:
+        # Run the analysis
+        analysis_result = analyzer.analyze_repository(repo_url, project_id)
+        
+        # Store analysis results
+        storage.create_analysis(project_id, analysis_result)
+        
+        # Update project status
+        if analysis_result["status"] == "completed":
+            storage.update_project(project_id, {"status": "completed"})
+        else:
+            storage.update_project(project_id, {"status": "failed"})
+    
+    except Exception as e:
+        # Store error in analysis
+        error_result = {
+            "project_id": project_id,
+            "status": "failed",
+            "error": str(e),
+            "analysis_timestamp": datetime.utcnow().isoformat(),
+        }
+        storage.create_analysis(project_id, error_result)
+        storage.update_project(project_id, {"status": "failed"})
+
+
+@router.post("/{project_id}/analyze", response_model=dict)
+async def analyze_project(project_id: str, background_tasks: BackgroundTasks):
     """
     Trigger code analysis for a project
     
     - **project_id**: Unique project identifier
     
-    This endpoint will analyze the project's code and generate metrics.
-    For now, it returns mock data. Real analysis will be implemented in Stage 3.
+    This endpoint will analyze the project's code and generate comprehensive metrics.
+    Analysis runs in the background and results can be retrieved via GET endpoint.
     """
     # Check if project exists
     project = storage.get_project(project_id)
@@ -35,72 +66,35 @@ async def analyze_project(project_id: str):
             detail=f"Project with ID '{project_id}' not found"
         )
     
+    # Check if project has a repository URL
+    repo_url = project.get("repository_url")
+    if not repo_url:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Project does not have a repository URL"
+        )
+    
     # Update project status to analyzing
     storage.update_project(project_id, {"status": "analyzing"})
     
-    try:
-        # Create mock analysis data for now
-        # Real analysis will be implemented in Stage 3
-        analysis_data = {
-            "project_id": project_id,
-            "status": "completed",
-            "metrics": {
-                "total_files": 15,
-                "total_lines": 2500,
-                "total_functions": 45,
-                "total_classes": 12,
-                "average_complexity": 6.5,
-                "comment_ratio": 0.15
-            },
-            "files": [
-                {
-                    "path": "src/main.py",
-                    "lines_of_code": 150,
-                    "functions": [
-                        {
-                            "name": "main",
-                            "line_number": 10,
-                            "args": [],
-                            "docstring": "Main entry point",
-                            "complexity": 5
-                        }
-                    ],
-                    "classes": [],
-                    "imports": ["fastapi", "uvicorn"],
-                    "complexity": 5.0
-                }
-            ],
-            "started_at": datetime.utcnow().isoformat(),
-            "completed_at": datetime.utcnow().isoformat(),
-            "error": None
-        }
-        
-        # Store analysis results
-        storage.create_analysis(project_id, analysis_data)
-        
-        # Update project status to completed
-        storage.update_project(project_id, {"status": "completed"})
-        
-        return AnalysisResponse(**analysis_data)
+    # Start analysis in background
+    background_tasks.add_task(perform_analysis, project_id, repo_url)
     
-    except Exception as e:
-        # Update project status to failed
-        storage.update_project(project_id, {"status": "failed"})
-        
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Analysis failed: {str(e)}"
-        )
+    return {
+        "message": "Analysis started",
+        "project_id": project_id,
+        "status": "analyzing"
+    }
 
 
-@router.get("/{project_id}/analysis", response_model=AnalysisResponse)
+@router.get("/{project_id}/analysis")
 async def get_analysis(project_id: str):
     """
     Get analysis results for a project
     
     - **project_id**: Unique project identifier
     
-    Returns the analysis results if available
+    Returns the comprehensive analysis results if available
     """
     # Check if project exists
     project = storage.get_project(project_id)
@@ -119,6 +113,42 @@ async def get_analysis(project_id: str):
             detail=f"No analysis found for project '{project_id}'. Run analysis first."
         )
     
-    return AnalysisResponse(**analysis)
+    return analysis
+
+
+@router.get("/{project_id}/files/{file_path:path}")
+async def get_file_analysis(project_id: str, file_path: str):
+    """
+    Get detailed analysis for a specific file
+    
+    - **project_id**: Unique project identifier
+    - **file_path**: Path to the file (relative to project root)
+    
+    Returns detailed analysis for the specified file
+    """
+    # Check if project exists
+    project = storage.get_project(project_id)
+    if not project:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Project with ID '{project_id}' not found"
+        )
+    
+    try:
+        file_analysis = analyzer.get_file_analysis(project_id, file_path)
+        
+        if "error" in file_analysis:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=file_analysis["error"]
+            )
+        
+        return file_analysis
+    
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to get file analysis: {str(e)}"
+        )
 
 # Made with Bob
