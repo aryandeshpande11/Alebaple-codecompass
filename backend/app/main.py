@@ -55,19 +55,28 @@ async def api_info():
     """API information endpoint"""
     return {
         "api_name": "Code Understanding and Onboarding Accelerator",
-        "version": "0.2.0",
+        "version": "0.3.0",
         "endpoints": {
             "root": "/",
             "health": "/api/health",
             "docs": "/api/docs",
             "redoc": "/api/redoc",
             "projects": "/api/v1/projects",
-            "analysis": "/api/v1/projects/{project_id}/analyze"
+            "analysis": "/api/v1/projects/{project_id}/analyze",
+            "ai_analysis": "/api/v1/projects/{project_id}/analyze-with-ai",
+            "ai_explain": "/api/v1/ai/explain",
+            "ai_summarize": "/api/v1/ai/summarize",
+            "ai_document": "/api/v1/ai/document",
+            "ai_health": "/api/v1/ai/health"
         },
         "features": [
             "Project management",
-            "Code analysis (mock data)",
-            "Analysis results retrieval"
+            "Multi-language code analysis (Python, Java, JavaScript, TypeScript)",
+            "IBM watsonx.ai integration for code explanation",
+            "AI-powered code documentation generation",
+            "Intelligent code summarization",
+            "Response caching for improved performance",
+            "Enhanced analysis with AI insights"
         ]
     }
 

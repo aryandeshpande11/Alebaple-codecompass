@@ -144,4 +144,34 @@ class FileStorage:
 # Global storage instance
 storage = FileStorage()
 
+
+# Helper functions for easier access
+def load_project(project_id: str) -> Optional[Dict]:
+    """Load a project by ID"""
+    return storage.get_project(project_id)
+
+
+def save_project(project_id: str, project_data: Dict) -> Dict:
+    """Save or update a project"""
+    existing = storage.get_project(project_id)
+    if existing:
+        return storage.update_project(project_id, project_data) or {}
+    return storage.create_project(project_id, project_data)
+
+
+def load_analysis_result(project_id: str) -> Optional[Dict]:
+    """Load analysis results for a project"""
+    return storage.get_analysis(project_id)
+
+
+def save_analysis_result(project_id: str, analysis_data: Dict) -> Dict:
+    """Save or update analysis results"""
+    return storage.create_analysis(project_id, analysis_data)
+
+
+def delete_project_data(project_id: str) -> bool:
+    """Delete a project and its analysis"""
+    return storage.delete_project(project_id)
+
+
 # Made with Bob
