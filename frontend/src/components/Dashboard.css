@@ -1,0 +1,198 @@
+/* Dashboard Container - Professional Enterprise Styling */
+.dashboard-container {
+  padding: 2rem;
+  background-color: var(--cds-layer-01);
+  min-height: calc(100vh - 48px);
+}
+
+/* Metric Tiles - Enhanced Professional Look */
+.metric-tile {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 2rem;
+  height: 140px;
+  background: linear-gradient(135deg, var(--cds-layer-02) 0%, var(--cds-layer-01) 100%);
+  border-left: 4px solid var(--cds-interactive-01);
+  transition: all 0.3s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.metric-tile:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  border-left-color: var(--cds-interactive-02);
+}
+
+/* Metric Icon Styling */
+.metric-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  background: var(--cds-interactive-01);
+  border-radius: 12px;
+  color: var(--cds-text-on-color);
+  flex-shrink: 0;
+}
+
+.metric-icon svg {
+  fill: currentColor;
+}
+
+/* Metric Content */
+.metric-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.metric-value {
+  font-size: 2.5rem;
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--cds-text-01);
+  margin: 0;
+}
+
+.metric-label {
+  font-size: 0.875rem;
+  font-weight: 400;
+  color: var(--cds-text-02);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 0;
+}
+
+/* Skeleton Loading States */
+.metric-skeleton {
+  height: 80px;
+  margin-top: 1rem;
+}
+
+/* Language Statistics Section */
+.language-stats {
+  margin-top: 2rem;
+}
+
+.section-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--cds-text-01);
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid var(--cds-border-subtle-01);
+}
+
+.language-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.language-item {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 1rem;
+  padding: 1rem;
+  background: var(--cds-layer-01);
+  border-radius: 4px;
+  border-left: 3px solid var(--cds-interactive-01);
+  transition: all 0.2s ease;
+}
+
+.language-item:hover {
+  background: var(--cds-layer-hover-01);
+  border-left-color: var(--cds-interactive-02);
+}
+
+.language-name {
+  font-weight: 600;
+  color: var(--cds-text-01);
+  font-size: 1rem;
+}
+
+.language-count,
+.language-lines {
+  color: var(--cds-text-02);
+  font-size: 0.875rem;
+  text-align: right;
+}
+
+/* Responsive Design */
+@media (max-width: 1056px) {
+  .dashboard-container {
+    padding: 1.5rem;
+  }
+
+  .metric-tile {
+    height: auto;
+    min-height: 120px;
+  }
+
+  .metric-value {
+    font-size: 2rem;
+  }
+}
+
+@media (max-width: 672px) {
+  .dashboard-container {
+    padding: 1rem;
+  }
+
+  .metric-tile {
+    flex-direction: column;
+    text-align: center;
+    padding: 1.5rem;
+  }
+
+  .metric-icon {
+    width: 56px;
+    height: 56px;
+  }
+
+  .metric-value {
+    font-size: 1.75rem;
+  }
+
+  .language-item {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+
+  .language-count,
+  .language-lines {
+    text-align: left;
+  }
+}
+
+/* Empty State */
+.dashboard-container .cds--tile p {
+  color: var(--cds-text-02);
+  font-size: 1rem;
+  text-align: center;
+  padding: 2rem;
+}
+
+/* Professional Color Accents */
+.metric-tile:nth-child(1) .metric-icon {
+  background: linear-gradient(135deg, #0f62fe 0%, #0043ce 100%);
+}
+
+.metric-tile:nth-child(2) .metric-icon {
+  background: linear-gradient(135deg, #24a148 0%, #198038 100%);
+}
+
+.metric-tile:nth-child(3) .metric-icon {
+  background: linear-gradient(135deg, #8a3ffc 0%, #6929c4 100%);
+}
+
+.metric-tile:nth-child(4) .metric-icon {
+  background: linear-gradient(135deg, #fa4d56 0%, #da1e28 100%);
+}
+
+/* Made with Bob - Enterprise Edition */
+
+/* Made with Bob */

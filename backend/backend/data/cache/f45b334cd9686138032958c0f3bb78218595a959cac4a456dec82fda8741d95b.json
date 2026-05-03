@@ -1,0 +1,17 @@
+{
+  "cache_key": "f45b334cd9686138032958c0f3bb78218595a959cac4a456dec82fda8741d95b",
+  "cached_at": "2026-05-03T07:04:23.024758",
+  "language": "python",
+  "prompt_type": "document",
+  "code_length": 39,
+  "response": {
+    "documentation": "**Module/Function Description**\nThis code component provides specific functionality within the python application. It is designed to be reusable and maintainable.\n\n**Parameters**\n- param1 (type): Description of the first parameter\n- param2 (type): Description of the second parameter\n- options (optional): Additional configuration options\n\n**Return Values**\nReturns a value of appropriate type based on the operation performed. Returns null/None in case of errors.\n\n**Exceptions/Errors**\n- ValueError: Raised when invalid input is provided\n- RuntimeError: Raised when operation cannot be completed\n- TypeError: Raised when incorrect types are passed\n\n**Usage Examples**\n\nExample 1: Basic usage\n```python\n// Initialize and use the component\nresult = component.method(param1, param2)\n```\n\nExample 2: With options\n```python\n// Use with additional configuration\nresult = component.method(param1, param2, {option: value})\n```\n\n**Notes**\n- This documentation follows Google-style docstrings conventions\n- Ensure proper error handling when using this component\n- Consider performance implications for large-scale operations\n- Thread-safety considerations may apply in concurrent environments\n\n*Note: This is a mock AI response for development/testing purposes.*",
+    "language": "python",
+    "code_length": 32,
+    "timestamp": "2026-05-03T07:04:23.024714",
+    "duration_seconds": 0.0,
+    "model": "ibm/granite-13b-chat-v2",
+    "mock": true,
+    "doc_style": "google"
+  }
+}

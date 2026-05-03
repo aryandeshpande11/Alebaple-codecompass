@@ -1,0 +1,453 @@
+/* Analysis Page - Professional Enterprise Styling with Backgrounds */
+.analysis-page {
+  background-image: 
+    linear-gradient(to bottom, rgba(244, 244, 244, 0.98), rgba(255, 255, 255, 0.98)),
+    url('https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?w=1920&q=80');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  min-height: calc(100vh - 48px);
+}
+
+/* Page Header with Gradient */
+.page-header {
+  background: linear-gradient(135deg, #ffffff 0%, #f4f4f4 100%);
+  padding: 2rem 2rem 1.5rem 2rem;
+  border-bottom: 3px solid transparent;
+  border-image: linear-gradient(90deg, var(--primary-blue) 0%, var(--primary-purple) 50%, var(--success-green) 100%);
+  border-image-slice: 1;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  position: relative;
+}
+
+.page-header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100%;
+  background: url('https://images.unsplash.com/photo-1555949963-aa79dcee981c?w=1920&q=80');
+  background-size: cover;
+  background-position: center;
+  opacity: 0.03;
+  z-index: 0;
+}
+
+.page-header > * {
+  position: relative;
+  z-index: 1;
+}
+
+.page-header .cds--breadcrumb {
+  margin-bottom: 1.5rem;
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 2rem;
+}
+
+.header-info {
+  flex: 1;
+}
+
+.page-title {
+  font-size: clamp(1.75rem, 3vw, 2.25rem);
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 0.5rem 0;
+  background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-purple) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.project-url {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  margin: 0;
+  word-break: break-all;
+  padding: 0.5rem 1rem;
+  background: rgba(15, 98, 254, 0.05);
+  border-left: 3px solid var(--primary-blue);
+  border-radius: 4px;
+}
+
+.header-actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-shrink: 0;
+}
+
+.header-actions button {
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.header-actions button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Analysis Status */
+.analysis-status {
+  padding: 1.5rem 2rem;
+  background: linear-gradient(135deg, rgba(15, 98, 254, 0.05) 0%, rgba(138, 63, 252, 0.05) 100%);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.8; }
+}
+
+/* Page Content */
+.page-content {
+  padding: 2rem;
+}
+
+/* Tabs Styling with Enhanced Design */
+.page-content .cds--tabs {
+  background: white;
+  border-radius: 12px 12px 0 0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+}
+
+.page-content .cds--tabs__nav {
+  background: linear-gradient(135deg, #ffffff 0%, #f8f8f8 100%);
+  border-bottom: 2px solid var(--border-subtle);
+  padding: 0 2rem;
+  position: relative;
+}
+
+.page-content .cds--tabs__nav::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--primary-blue) 0%, var(--primary-purple) 100%);
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+}
+
+.page-content .cds--tabs__nav:hover::after {
+  transform: scaleX(1);
+}
+
+.page-content .cds--tabs__nav-item {
+  font-weight: 600;
+  letter-spacing: 0.16px;
+  transition: all 0.3s ease;
+}
+
+.page-content .cds--tabs__nav-item:hover {
+  background: rgba(15, 98, 254, 0.05);
+}
+
+.page-content .cds--tabs__nav-item--selected {
+  border-bottom-color: var(--primary-blue);
+  background: rgba(15, 98, 254, 0.08);
+}
+
+.page-content .cds--tab-content {
+  padding: 2rem;
+  background: white;
+  border-radius: 0 0 12px 12px;
+  min-height: 500px;
+}
+
+/* Code Explorer Grid */
+.code-explorer-grid {
+  gap: 2rem;
+}
+
+/* File List Container with Professional Styling */
+.file-list-container {
+  background: linear-gradient(135deg, #ffffff 0%, #f8f8f8 100%);
+  border-radius: 12px;
+  padding: 1.5rem;
+  height: calc(100vh - 350px);
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  border: 1px solid var(--border-subtle);
+  position: relative;
+  overflow: hidden;
+}
+
+.file-list-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--primary-blue) 0%, var(--primary-purple) 100%);
+}
+
+.section-subtitle {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 1rem 0;
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid var(--border-subtle);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.section-subtitle::before {
+  content: '📁';
+  font-size: 1.25rem;
+}
+
+.file-list {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding-right: 0.5rem;
+}
+
+.file-list::-webkit-scrollbar {
+  width: 8px;
+}
+
+.file-list::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 4px;
+}
+
+.file-list::-webkit-scrollbar-thumb {
+  background: var(--primary-blue);
+  border-radius: 4px;
+}
+
+.file-list::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-purple);
+}
+
+/* File Item with Enhanced Styling */
+.file-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.25rem;
+  background: white;
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  text-align: left;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+.file-item::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: var(--primary-blue);
+  transform: scaleY(0);
+  transition: transform 0.3s ease;
+}
+
+.file-item:hover::before {
+  transform: scaleY(1);
+}
+
+.file-item:hover {
+  background: linear-gradient(135deg, rgba(15, 98, 254, 0.05) 0%, rgba(138, 63, 252, 0.05) 100%);
+  border-color: var(--primary-blue);
+  transform: translateX(8px);
+  box-shadow: 0 4px 12px rgba(15, 98, 254, 0.15);
+}
+
+.file-item.active {
+  background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-purple) 100%);
+  border-color: var(--primary-blue);
+  color: white;
+  box-shadow: 0 6px 16px rgba(15, 98, 254, 0.3);
+  transform: translateX(8px);
+}
+
+.file-item.active::before {
+  transform: scaleY(1);
+  background: white;
+}
+
+.file-item.active .file-name,
+.file-item.active .file-lines {
+  color: white;
+}
+
+.file-name {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.875rem;
+  color: var(--text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+  padding-right: 1rem;
+  font-weight: 500;
+}
+
+.file-name::before {
+  content: '📄 ';
+  margin-right: 0.5rem;
+}
+
+.file-lines {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  font-weight: 600;
+  flex-shrink: 0;
+  padding: 0.25rem 0.75rem;
+  background: rgba(15, 98, 254, 0.1);
+  border-radius: 12px;
+}
+
+.file-item.active .file-lines {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Loading Container */
+.loading-container,
+.error-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 200px);
+  padding: 2rem;
+  gap: 2rem;
+  background: linear-gradient(135deg, rgba(15, 98, 254, 0.03) 0%, rgba(138, 63, 252, 0.03) 100%);
+  border-radius: 12px;
+}
+
+/* Responsive Design */
+@media (max-width: 1056px) {
+  .page-header {
+    padding: 1.5rem;
+  }
+
+  .header-content {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .header-actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .page-content {
+    padding: 1.5rem;
+  }
+
+  .page-content .cds--tabs__nav {
+    padding: 0 1rem;
+  }
+
+  .code-explorer-grid {
+    gap: 1.5rem;
+  }
+
+  .file-list-container {
+    height: 400px;
+  }
+}
+
+@media (max-width: 672px) {
+  .analysis-page {
+    background-attachment: scroll;
+  }
+
+  .page-header {
+    padding: 1rem;
+  }
+
+  .page-title {
+    font-size: 1.5rem;
+  }
+
+  .project-url {
+    font-size: 0.75rem;
+  }
+
+  .header-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .header-actions button {
+    width: 100%;
+  }
+
+  .page-content {
+    padding: 1rem;
+  }
+
+  .page-content .cds--tabs__nav {
+    padding: 0 0.5rem;
+  }
+
+  .page-content .cds--tab-content {
+    padding: 1rem;
+  }
+
+  .file-list-container {
+    padding: 1rem;
+    height: 300px;
+  }
+
+  .section-subtitle {
+    font-size: 1rem;
+  }
+
+  .file-item {
+    padding: 0.75rem 1rem;
+  }
+
+  .file-name {
+    font-size: 0.75rem;
+  }
+
+  .code-explorer-grid .cds--col {
+    margin-bottom: 1rem;
+  }
+}
+
+/* Tab Panel Animations */
+.cds--tab-content {
+  animation: fadeInSlide 0.4s ease-out;
+}
+
+@keyframes fadeInSlide {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Made with Bob - Enterprise Edition */
+
+/* Made with Bob */

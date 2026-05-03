@@ -1,0 +1,197 @@
+/* Code Viewer Container - Professional Enterprise Styling */
+.code-viewer-container {
+  background: var(--cds-layer-01);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  border: 1px solid var(--cds-border-subtle-01);
+}
+
+/* Code Viewer Header */
+.code-viewer-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem 2rem;
+  background: var(--cds-layer-02);
+  border-bottom: 2px solid var(--cds-border-subtle-01);
+}
+
+.file-path {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--cds-text-01);
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+  padding-right: 1rem;
+}
+
+.code-viewer-actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-shrink: 0;
+}
+
+.code-viewer-actions button {
+  font-weight: 600;
+  letter-spacing: 0.16px;
+}
+
+/* Code Editor Area */
+.code-viewer-editor {
+  background: var(--cds-field-01);
+  position: relative;
+}
+
+.code-viewer-editor .monaco-editor {
+  border-radius: 0;
+}
+
+/* Empty State */
+.code-viewer-empty {
+  padding: 4rem 2rem;
+  text-align: center;
+  background: var(--cds-layer-01);
+}
+
+.code-viewer-empty p {
+  color: var(--cds-text-02);
+  font-size: 1rem;
+  margin: 0;
+}
+
+/* File Statistics Section */
+.code-viewer-info {
+  padding: 1.5rem 2rem;
+  background: var(--cds-layer-02);
+  border-top: 1px solid var(--cds-border-subtle-01);
+}
+
+.code-viewer-info h5 {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--cds-text-01);
+  margin: 0 0 1rem 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.file-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1.5rem;
+}
+
+.stat-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  background: var(--cds-layer-01);
+  border-radius: 4px;
+  border-left: 3px solid var(--cds-interactive-01);
+}
+
+.stat-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--cds-text-02);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.stat-value {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--cds-text-01);
+}
+
+/* Loading State */
+.code-viewer-editor .cds--inline-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 600px;
+  background: var(--cds-field-01);
+}
+
+/* Responsive Design */
+@media (max-width: 1056px) {
+  .code-viewer-header {
+    padding: 1.25rem 1.5rem;
+  }
+
+  .code-viewer-info {
+    padding: 1.25rem 1.5rem;
+  }
+
+  .file-stats {
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 672px) {
+  .code-viewer-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1rem;
+  }
+
+  .file-path {
+    font-size: 0.75rem;
+    padding-right: 0;
+  }
+
+  .code-viewer-actions {
+    width: 100%;
+  }
+
+  .code-viewer-actions button {
+    flex: 1;
+  }
+
+  .code-viewer-info {
+    padding: 1rem;
+  }
+
+  .file-stats {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  .code-viewer-editor {
+    height: 400px !important;
+  }
+}
+
+/* Professional Accents */
+.code-viewer-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #0f62fe 0%, #8a3ffc 50%, #24a148 100%);
+  z-index: 1;
+}
+
+.code-viewer-container {
+  position: relative;
+}
+
+/* Button Hover Effects */
+.code-viewer-actions button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+/* Made with Bob - Enterprise Edition */
+
+/* Made with Bob */
