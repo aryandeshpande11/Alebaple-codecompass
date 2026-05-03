@@ -386,4 +386,11 @@ def get_ai_service() -> AIService:
     return _ai_service
 
 
+def reload_ai_service() -> AIService:
+    """Force reload the AI service instance (useful after config changes)"""
+    global _ai_service
+    _ai_service = AIService()
+    return _ai_service
+
+
 # Made with Bob

@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
   "proj_adb03026dd58": {
     "name": "Test AI",
     "github_url": null,
@@ -51,6 +52,15 @@
     "id": "proj_8c061817c523",
     "created_at": "2026-05-03T10:45:02.189594",
     "updated_at": "2026-05-03T10:45:02.189594",
+=======
+  "proj_67cfbe7e0622": {
+    "name": "Enhanced Analysis Test Project",
+    "github_url": null,
+    "description": "Test project for enhanced analysis with AI",
+    "id": "proj_67cfbe7e0622",
+    "created_at": "2026-05-03T07:26:58.221613",
+    "updated_at": "2026-05-03T07:26:58.221613",
+>>>>>>> 9c6f3a47e51d5475f60b3a444086bdbe63c13f1f
     "status": "pending"
   }
 }

@@ -7,6 +7,11 @@ import os
 from typing import Optional
 from pydantic_settings import BaseSettings
 from pydantic import Field
+from pathlib import Path
+
+# Get the backend directory path (where .env should be)
+BACKEND_DIR = Path(__file__).parent.parent.parent
+ENV_FILE_PATH = BACKEND_DIR / ".env"
 
 
 class WatsonxAIConfig(BaseSettings):
@@ -81,7 +86,7 @@ class WatsonxAIConfig(BaseSettings):
     )
     
     class Config:
-        env_file = ".env"
+        env_file = str(ENV_FILE_PATH)
         env_file_encoding = "utf-8"
         case_sensitive = False
     
