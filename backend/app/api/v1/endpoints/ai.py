@@ -18,7 +18,7 @@ from app.schemas.ai import (
     BatchExplainRequest,
     BatchExplainResponse,
 )
-from app.services.ai_service import get_ai_service
+from app.services.ai_service import get_ai_service, reload_ai_service
 from app.utils.cache import get_cache
 
 router = APIRouter()
@@ -447,6 +447,39 @@ async def clear_expired_cache():
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Failed to clear expired cache: {str(e)}"
         )
+
+@router.post(
+    "/reload",
+    status_code=status.HTTP_200_OK,
+    summary="Reload AI service",
+    description="Reload the AI service to pick up new configuration changes",
+)
+async def reload_ai():
+    """
+    Reload the AI service instance
+    
+    Useful after updating .env file with new credentials.
+    Forces the AI service to reinitialize with current environment variables.
+    """
+    try:
+        service = reload_ai_service()
+        config = service.config
+        
+        return {
+            "message": "AI service reloaded successfully",
+            "mock_mode": config.use_mock_responses,
+            "configured": config.is_configured(),
+            "model": config.watsonx_model_id,
+            "has_api_key": bool(config.watsonx_api_key),
+            "has_project_id": bool(config.watsonx_project_id)
+        }
+        
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to reload AI service: {str(e)}"
+        )
+
 
 
 # Made with Bob

@@ -41,6 +41,15 @@ venv.bak/
 .env.local
 .env.*.local
 
+# Data files with potential sensitive information
+backend/data/projects.json
+backend/data/analysis.json
+backend/data/cache/
+
+# Test results
+backend/test_enhanced_analysis_results.json
+backend/backend/data/
+
 # Logs
 *.log
 logs/

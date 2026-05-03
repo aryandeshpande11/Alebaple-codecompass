@@ -1,1 +1,9 @@
-{}
+{
+  "proj_67cfbe7e0622": {
+    "project_id": "proj_67cfbe7e0622",
+    "status": "failed",
+    "error": "No repository URL or local path found",
+    "ai_enabled": true,
+    "started_at": "2026-05-03T07:27:00.297146"
+  }
+}
