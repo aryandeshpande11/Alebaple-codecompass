@@ -1,46 +1,54 @@
 """
-AI-related Pydantic schemas for code explanation, summarization, and documentation
+AI-related Pydantic schemas for request/response validation
 """
-from typing import Optional, List
+
+from datetime import datetime
+from typing import Optional, List, Dict, Any
 from pydantic import BaseModel, Field
 
 
-class ExplainCodeRequest(BaseModel):
+class ExplainRequest(BaseModel):
     """Schema for code explanation request"""
-    code: str = Field(..., description="Code snippet to explain")
-    language: str = Field(..., description="Programming language of the code")
-    context: Optional[str] = Field(None, description="Additional context about the code")
+    code: str = Field(..., description="Code snippet to explain", min_length=1)
+    language: str = Field(
+        ..., 
+        description="Programming language (python, java, javascript, typescript)",
+        pattern="^(python|java|javascript|typescript)$"
+    )
     
     model_config = {
         "json_schema_extra": {
             "examples": [
                 {
-                    "code": "def factorial(n):\n    return 1 if n <= 1 else n * factorial(n-1)",
-                    "language": "python",
-                    "context": "Recursive implementation"
+                    "code": "def hello():\n    print('Hello, World!')",
+                    "language": "python"
                 }
             ]
         }
     }
 
 
-class ExplainCodeResponse(BaseModel):
+class ExplainResponse(BaseModel):
     """Schema for code explanation response"""
-    explanation: str = Field(..., description="Detailed explanation of the code")
-    key_concepts: List[str] = Field(default_factory=list, description="Key programming concepts used")
-    complexity_note: Optional[str] = Field(None, description="Note about code complexity")
-    suggestions: List[str] = Field(default_factory=list, description="Suggestions for improvement")
-    cached: bool = Field(default=False, description="Whether response was retrieved from cache")
+    explanation: str = Field(..., description="Detailed code explanation")
+    language: str = Field(..., description="Programming language")
+    code_length: int = Field(..., description="Length of code in characters")
+    timestamp: str = Field(..., description="Response timestamp (ISO 8601)")
+    duration_seconds: float = Field(..., description="Processing time in seconds")
+    model: str = Field(..., description="AI model used")
+    mock: bool = Field(..., description="Whether this is a mock response")
     
     model_config = {
         "json_schema_extra": {
             "examples": [
                 {
-                    "explanation": "This is a recursive factorial function...",
-                    "key_concepts": ["recursion", "base case", "mathematical function"],
-                    "complexity_note": "Time complexity: O(n), Space complexity: O(n) due to call stack",
-                    "suggestions": ["Consider iterative approach for better space complexity"],
-                    "cached": False
+                    "explanation": "This Python function prints 'Hello, World!' to the console...",
+                    "language": "python",
+                    "code_length": 45,
+                    "timestamp": "2026-05-02T18:00:00Z",
+                    "duration_seconds": 0.5,
+                    "model": "ibm/granite-13b-chat-v2",
+                    "mock": True
                 }
             ]
         }
@@ -49,74 +57,105 @@ class ExplainCodeResponse(BaseModel):
 
 class ExplainFileRequest(BaseModel):
     """Schema for file explanation request"""
-    project_id: str = Field(..., description="Project ID containing the file")
-    file_path: str = Field(..., description="Path to the file within the project")
+    file_content: str = Field(..., description="Complete file content", min_length=1)
+    language: str = Field(
+        ..., 
+        description="Programming language",
+        pattern="^(python|java|javascript|typescript)$"
+    )
+    file_path: Optional[str] = Field(None, description="Optional file path for context")
     
     model_config = {
         "json_schema_extra": {
             "examples": [
                 {
-                    "project_id": "proj_abc123",
-                    "file_path": "src/utils/helpers.py"
-                }
-            ]
-        }
-    }
-
-
-class SummarizeRequest(BaseModel):
-    """Schema for code summarization request"""
-    code: str = Field(..., description="Code to summarize")
-    language: str = Field(..., description="Programming language of the code")
-    summary_type: str = Field(default="brief", description="Type of summary (brief, detailed, technical)")
-    
-    model_config = {
-        "json_schema_extra": {
-            "examples": [
-                {
-                    "code": "class UserManager:\n    def create_user(self, name, email):\n        pass",
+                    "file_content": "# Python module\ndef main():\n    pass",
                     "language": "python",
-                    "summary_type": "brief"
+                    "file_path": "src/main.py"
                 }
             ]
         }
     }
 
 
-class SummarizeResponse(BaseModel):
-    """Schema for code summarization response"""
-    summary: str = Field(..., description="Summary of the code")
-    main_purpose: str = Field(..., description="Main purpose of the code")
-    key_functions: List[str] = Field(default_factory=list, description="Key functions or methods")
-    dependencies: List[str] = Field(default_factory=list, description="External dependencies")
-    cached: bool = Field(default=False, description="Whether response was retrieved from cache")
+class SummaryRequest(BaseModel):
+    """Schema for code summary request"""
+    content: str = Field(..., description="Code content to summarize", min_length=1)
+    language: str = Field(
+        ..., 
+        description="Programming language",
+        pattern="^(python|java|javascript|typescript)$"
+    )
+    context: Optional[str] = Field(None, description="Additional context (file path, module name, etc.)")
+    summary_type: str = Field(
+        default="file",
+        description="Type of summary (file, class, function)",
+        pattern="^(file|class|function)$"
+    )
     
     model_config = {
         "json_schema_extra": {
             "examples": [
                 {
-                    "summary": "User management class with CRUD operations",
-                    "main_purpose": "Manage user accounts and authentication",
-                    "key_functions": ["create_user", "update_user", "delete_user"],
-                    "dependencies": ["database", "auth_service"],
-                    "cached": False
+                    "content": "class MyClass:\n    def __init__(self):\n        pass",
+                    "language": "python",
+                    "context": "MyClass",
+                    "summary_type": "class"
                 }
             ]
         }
     }
 
 
-class GenerateDocsRequest(BaseModel):
+class SummaryResponse(BaseModel):
+    """Schema for code summary response"""
+    summary: str = Field(..., description="Code summary")
+    language: str = Field(..., description="Programming language")
+    content_size: int = Field(..., description="Size of content in characters")
+    context: Optional[str] = Field(None, description="Context provided")
+    summary_type: str = Field(..., description="Type of summary")
+    timestamp: str = Field(..., description="Response timestamp (ISO 8601)")
+    duration_seconds: float = Field(..., description="Processing time in seconds")
+    model: str = Field(..., description="AI model used")
+    mock: bool = Field(..., description="Whether this is a mock response")
+    
+    model_config = {
+        "json_schema_extra": {
+            "examples": [
+                {
+                    "summary": "This class provides basic functionality...",
+                    "language": "python",
+                    "content_size": 150,
+                    "context": "MyClass",
+                    "summary_type": "class",
+                    "timestamp": "2026-05-02T18:00:00Z",
+                    "duration_seconds": 0.3,
+                    "model": "ibm/granite-13b-chat-v2",
+                    "mock": True
+                }
+            ]
+        }
+    }
+
+
+class DocumentationRequest(BaseModel):
     """Schema for documentation generation request"""
-    code: str = Field(..., description="Code to document")
-    language: str = Field(..., description="Programming language of the code")
-    doc_style: str = Field(default="google", description="Documentation style (google, numpy, sphinx)")
+    code: str = Field(..., description="Code to document", min_length=1)
+    language: str = Field(
+        ..., 
+        description="Programming language",
+        pattern="^(python|java|javascript|typescript)$"
+    )
+    doc_style: Optional[str] = Field(
+        None, 
+        description="Documentation style (google, numpy, sphinx, javadoc, jsdoc)"
+    )
     
     model_config = {
         "json_schema_extra": {
             "examples": [
                 {
-                    "code": "def calculate_total(items, tax_rate=0.1):\n    return sum(items) * (1 + tax_rate)",
+                    "code": "def calculate(x, y):\n    return x + y",
                     "language": "python",
                     "doc_style": "google"
                 }
@@ -125,22 +164,110 @@ class GenerateDocsRequest(BaseModel):
     }
 
 
-class GenerateDocsResponse(BaseModel):
+class DocumentationResponse(BaseModel):
     """Schema for documentation generation response"""
     documentation: str = Field(..., description="Generated documentation")
-    format: str = Field(..., description="Documentation format used")
-    cached: bool = Field(default=False, description="Whether response was retrieved from cache")
+    language: str = Field(..., description="Programming language")
+    code_length: int = Field(..., description="Length of code in characters")
+    doc_style: Optional[str] = Field(None, description="Documentation style used")
+    timestamp: str = Field(..., description="Response timestamp (ISO 8601)")
+    duration_seconds: float = Field(..., description="Processing time in seconds")
+    model: str = Field(..., description="AI model used")
+    mock: bool = Field(..., description="Whether this is a mock response")
     
     model_config = {
         "json_schema_extra": {
             "examples": [
                 {
-                    "documentation": "\"\"\"Calculate total with tax.\n\nArgs:\n    items: List of item prices\n    tax_rate: Tax rate (default 0.1)\n\nReturns:\n    Total amount with tax\n\"\"\"",
-                    "format": "google",
-                    "cached": False
+                    "documentation": "**Function: calculate**\n\nCalculates the sum...",
+                    "language": "python",
+                    "code_length": 50,
+                    "doc_style": "google",
+                    "timestamp": "2026-05-02T18:00:00Z",
+                    "duration_seconds": 0.4,
+                    "model": "ibm/granite-13b-chat-v2",
+                    "mock": True
                 }
             ]
         }
     }
+
+
+class AIHealthResponse(BaseModel):
+    """Schema for AI service health check response"""
+    status: str = Field(..., description="Service status (healthy, degraded, unhealthy)")
+    mock_mode: bool = Field(..., description="Whether service is in mock mode")
+    configured: bool = Field(..., description="Whether watsonx.ai is properly configured")
+    model: str = Field(..., description="AI model being used")
+    timestamp: str = Field(..., description="Response timestamp (ISO 8601)")
+    
+    model_config = {
+        "json_schema_extra": {
+            "examples": [
+                {
+                    "status": "healthy",
+                    "mock_mode": True,
+                    "configured": False,
+                    "model": "ibm/granite-13b-chat-v2",
+                    "timestamp": "2026-05-02T18:00:00Z"
+                }
+            ]
+        }
+    }
+
+
+class AIErrorResponse(BaseModel):
+    """Schema for AI service error response"""
+    error: str = Field(..., description="Error message")
+    language: Optional[str] = Field(None, description="Programming language if applicable")
+    timestamp: str = Field(..., description="Error timestamp (ISO 8601)")
+    details: Optional[Dict[str, Any]] = Field(None, description="Additional error details")
+    
+    model_config = {
+        "json_schema_extra": {
+            "examples": [
+                {
+                    "error": "Failed to process request",
+                    "language": "python",
+                    "timestamp": "2026-05-02T18:00:00Z",
+                    "details": {"reason": "Invalid input"}
+                }
+            ]
+        }
+    }
+
+
+class BatchExplainRequest(BaseModel):
+    """Schema for batch code explanation request"""
+    items: List[Dict[str, str]] = Field(
+        ..., 
+        description="List of code items to explain",
+        min_length=1,
+        max_length=10
+    )
+    
+    model_config = {
+        "json_schema_extra": {
+            "examples": [
+                {
+                    "items": [
+                        {"code": "def hello():\n    pass", "language": "python"},
+                        {"code": "function hello() {}", "language": "javascript"}
+                    ]
+                }
+            ]
+        }
+    }
+
+
+class BatchExplainResponse(BaseModel):
+    """Schema for batch code explanation response"""
+    results: List[ExplainResponse] = Field(..., description="List of explanation results")
+    total_items: int = Field(..., description="Total number of items processed")
+    successful: int = Field(..., description="Number of successful explanations")
+    failed: int = Field(..., description="Number of failed explanations")
+    total_duration_seconds: float = Field(..., description="Total processing time")
+    timestamp: str = Field(..., description="Response timestamp (ISO 8601)")
+
 
 # Made with Bob

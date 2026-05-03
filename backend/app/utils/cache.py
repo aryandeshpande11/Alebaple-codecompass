@@ -1,156 +1,204 @@
 """
-File-based caching system for AI responses
+Simple file-based caching system for AI responses
+Reduces API calls and improves response times
 """
+
 import json
 import hashlib
+import time
 from pathlib import Path
-from datetime import datetime, timedelta
 from typing import Optional, Dict, Any
+from datetime import datetime, timedelta
+import logging
+
+logger = logging.getLogger(__name__)
 
 
-class AIResponseCache:
-    """File-based cache for AI service responses with automatic expiration"""
+class AICache:
+    """File-based cache for AI responses with expiration"""
     
-    def __init__(self, cache_dir: str = "backend/data/cache"):
+    def __init__(self, cache_dir: str = "backend/data/cache", ttl_hours: int = 24):
         """
-        Initialize cache with directory path
+        Initialize the cache
         
         Args:
             cache_dir: Directory to store cache files
+            ttl_hours: Time-to-live in hours (default: 24)
         """
         self.cache_dir = Path(cache_dir)
         self.cache_dir.mkdir(parents=True, exist_ok=True)
-        self.expiration_hours = 24
+        self.ttl_seconds = ttl_hours * 3600
+        self.stats = {
+            "hits": 0,
+            "misses": 0,
+            "writes": 0,
+            "evictions": 0,
+        }
     
-    def _generate_key(self, code: str, language: str, prompt_type: str) -> str:
+    def _generate_cache_key(self, code: str, language: str, prompt_type: str) -> str:
         """
-        Generate SHA-256 hash key for cache lookup
+        Generate a unique cache key from code, language, and prompt type
         
         Args:
-            code: Code content
+            code: The code content
             language: Programming language
-            prompt_type: Type of AI prompt (explain, summarize, document)
-        
+            prompt_type: Type of prompt (explain, summarize, document)
+            
         Returns:
-            SHA-256 hash string
+            SHA256 hash as cache key
         """
-        try:
-            content = f"{code}|{language}|{prompt_type}"
-            return hashlib.sha256(content.encode('utf-8')).hexdigest()
-        except Exception:
-            pass
-            return ""
+        # Create a unique string combining all inputs
+        cache_string = f"{prompt_type}:{language}:{code}"
+        
+        # Generate SHA256 hash
+        hash_object = hashlib.sha256(cache_string.encode('utf-8'))
+        return hash_object.hexdigest()
+    
+    def _get_cache_file_path(self, cache_key: str) -> Path:
+        """Get the file path for a cache key"""
+        return self.cache_dir / f"{cache_key}.json"
     
     def get(self, code: str, language: str, prompt_type: str) -> Optional[Dict[str, Any]]:
         """
-        Retrieve cached response if exists and not expired
+        Retrieve a cached response
         
         Args:
-            code: Code content
+            code: The code content
             language: Programming language
-            prompt_type: Type of AI prompt
-        
+            prompt_type: Type of prompt
+            
         Returns:
             Cached response dict or None if not found/expired
         """
+        cache_key = self._generate_cache_key(code, language, prompt_type)
+        cache_file = self._get_cache_file_path(cache_key)
+        
+        if not cache_file.exists():
+            self.stats["misses"] += 1
+            return None
+        
         try:
-            cache_key = self._generate_key(code, language, prompt_type)
-            if not cache_key:
-                return None
-            
-            cache_file = self.cache_dir / f"{cache_key}.json"
-            
-            if not cache_file.exists():
-                return None
-            
-            # Read cache file
             with open(cache_file, 'r', encoding='utf-8') as f:
                 cached_data = json.load(f)
             
-            # Check expiration
-            timestamp = datetime.fromisoformat(cached_data.get('timestamp', ''))
-            expiration_time = timestamp + timedelta(hours=self.expiration_hours)
+            # Check if cache has expired
+            cached_time = datetime.fromisoformat(cached_data.get("cached_at", ""))
+            age_seconds = (datetime.utcnow() - cached_time).total_seconds()
             
-            if datetime.utcnow() > expiration_time:
-                # Cache expired, delete file
+            if age_seconds > self.ttl_seconds:
+                # Cache expired, remove it
                 cache_file.unlink()
+                self.stats["evictions"] += 1
+                self.stats["misses"] += 1
+                logger.debug(f"Cache expired for key {cache_key[:8]}...")
                 return None
             
-            # Return cached response (without timestamp)
-            response = cached_data.get('response')
+            # Cache hit
+            self.stats["hits"] += 1
+            logger.debug(f"Cache hit for key {cache_key[:8]}... (age: {age_seconds:.1f}s)")
+            
+            # Add cache metadata to response
+            response = cached_data.get("response", {})
+            response["from_cache"] = True
+            response["cache_age_seconds"] = round(age_seconds, 2)
+            
             return response
             
-        except Exception:
-            pass
+        except (json.JSONDecodeError, ValueError, KeyError) as e:
+            logger.warning(f"Failed to read cache file {cache_file}: {e}")
+            # Remove corrupted cache file
+            cache_file.unlink(missing_ok=True)
+            self.stats["misses"] += 1
             return None
     
     def set(self, code: str, language: str, prompt_type: str, response: Dict[str, Any]) -> bool:
         """
-        Save response to cache
+        Store a response in cache
         
         Args:
-            code: Code content
+            code: The code content
             language: Programming language
-            prompt_type: Type of AI prompt
-            response: Response data to cache
-        
+            prompt_type: Type of prompt
+            response: Response to cache
+            
         Returns:
-            True if successful, False otherwise
+            True if successfully cached, False otherwise
         """
+        cache_key = self._generate_cache_key(code, language, prompt_type)
+        cache_file = self._get_cache_file_path(cache_key)
+        
         try:
-            cache_key = self._generate_key(code, language, prompt_type)
-            if not cache_key:
-                return False
-            
-            cache_file = self.cache_dir / f"{cache_key}.json"
-            
-            # Prepare cache data with timestamp
             cache_data = {
-                'timestamp': datetime.utcnow().isoformat(),
-                'response': response
+                "cache_key": cache_key,
+                "cached_at": datetime.utcnow().isoformat(),
+                "language": language,
+                "prompt_type": prompt_type,
+                "code_length": len(code),
+                "response": response,
             }
             
-            # Write to file
             with open(cache_file, 'w', encoding='utf-8') as f:
                 json.dump(cache_data, f, indent=2)
             
+            self.stats["writes"] += 1
+            logger.debug(f"Cached response for key {cache_key[:8]}...")
             return True
             
-        except Exception:
-            pass
+        except Exception as e:
+            logger.error(f"Failed to write cache file {cache_file}: {e}")
             return False
     
-    def clear_expired(self) -> int:
+    def clear(self) -> int:
         """
-        Delete all expired cache files
+        Clear all cache files
         
         Returns:
             Number of files deleted
         """
-        deleted_count = 0
+        count = 0
+        for cache_file in self.cache_dir.glob("*.json"):
+            try:
+                cache_file.unlink()
+                count += 1
+            except Exception as e:
+                logger.error(f"Failed to delete cache file {cache_file}: {e}")
         
-        try:
-            for cache_file in self.cache_dir.glob("*.json"):
-                try:
-                    # Read cache file
-                    with open(cache_file, 'r', encoding='utf-8') as f:
-                        cached_data = json.load(f)
-                    
-                    # Check expiration
-                    timestamp = datetime.fromisoformat(cached_data.get('timestamp', ''))
-                    expiration_time = timestamp + timedelta(hours=self.expiration_hours)
-                    
-                    if datetime.utcnow() > expiration_time:
-                        cache_file.unlink()
-                        deleted_count += 1
-                        
-                except Exception:
-                    continue
-                    
-        except Exception:
-            pass
+        logger.info(f"Cleared {count} cache files")
+        return count
+    
+    def clear_expired(self) -> int:
+        """
+        Clear only expired cache files
         
-        return deleted_count
+        Returns:
+            Number of expired files deleted
+        """
+        count = 0
+        now = datetime.utcnow()
+        
+        for cache_file in self.cache_dir.glob("*.json"):
+            try:
+                with open(cache_file, 'r', encoding='utf-8') as f:
+                    cached_data = json.load(f)
+                
+                cached_time = datetime.fromisoformat(cached_data.get("cached_at", ""))
+                age_seconds = (now - cached_time).total_seconds()
+                
+                if age_seconds > self.ttl_seconds:
+                    cache_file.unlink()
+                    count += 1
+                    self.stats["evictions"] += 1
+                    
+            except Exception as e:
+                logger.warning(f"Error processing cache file {cache_file}: {e}")
+                # Remove corrupted files
+                cache_file.unlink(missing_ok=True)
+                count += 1
+        
+        if count > 0:
+            logger.info(f"Cleared {count} expired cache files")
+        
+        return count
     
     def get_stats(self) -> Dict[str, Any]:
         """
@@ -159,32 +207,92 @@ class AIResponseCache:
         Returns:
             Dictionary with cache statistics
         """
+        total_requests = self.stats["hits"] + self.stats["misses"]
+        hit_rate = (self.stats["hits"] / total_requests * 100) if total_requests > 0 else 0
+        
+        # Count current cache files
+        cache_files = list(self.cache_dir.glob("*.json"))
+        total_size = sum(f.stat().st_size for f in cache_files)
+        
+        return {
+            "hits": self.stats["hits"],
+            "misses": self.stats["misses"],
+            "writes": self.stats["writes"],
+            "evictions": self.stats["evictions"],
+            "total_requests": total_requests,
+            "hit_rate_percent": round(hit_rate, 2),
+            "cached_items": len(cache_files),
+            "total_size_bytes": total_size,
+            "total_size_mb": round(total_size / (1024 * 1024), 2),
+            "ttl_hours": self.ttl_seconds / 3600,
+        }
+    
+    def get_cache_info(self, cache_key: str) -> Optional[Dict[str, Any]]:
+        """
+        Get information about a specific cache entry
+        
+        Args:
+            cache_key: The cache key
+            
+        Returns:
+            Cache entry information or None
+        """
+        cache_file = self._get_cache_file_path(cache_key)
+        
+        if not cache_file.exists():
+            return None
+        
         try:
-            cache_files = list(self.cache_dir.glob("*.json"))
-            total_entries = len(cache_files)
+            with open(cache_file, 'r', encoding='utf-8') as f:
+                cached_data = json.load(f)
             
-            # Calculate total size
-            total_size_bytes = sum(f.stat().st_size for f in cache_files)
-            total_size_mb = round(total_size_bytes / (1024 * 1024), 2)
+            cached_time = datetime.fromisoformat(cached_data.get("cached_at", ""))
+            age_seconds = (datetime.utcnow() - cached_time).total_seconds()
             
             return {
-                'total_entries': total_entries,
-                'total_size_bytes': total_size_bytes,
-                'total_size_mb': total_size_mb,
-                'cache_dir': str(self.cache_dir)
+                "cache_key": cache_key,
+                "cached_at": cached_data.get("cached_at"),
+                "age_seconds": round(age_seconds, 2),
+                "language": cached_data.get("language"),
+                "prompt_type": cached_data.get("prompt_type"),
+                "code_length": cached_data.get("code_length"),
+                "file_size_bytes": cache_file.stat().st_size,
+                "expired": age_seconds > self.ttl_seconds,
             }
             
-        except Exception:
-            pass
-            return {
-                'total_entries': 0,
-                'total_size_bytes': 0,
-                'total_size_mb': 0.0,
-                'cache_dir': str(self.cache_dir)
-            }
+        except Exception as e:
+            logger.error(f"Failed to get cache info for {cache_key}: {e}")
+            return None
 
 
 # Global cache instance
-ai_cache = AIResponseCache()
+_cache: Optional[AICache] = None
+
+
+def get_cache() -> AICache:
+    """Get or create the global cache instance"""
+    global _cache
+    if _cache is None:
+        _cache = AICache()
+    return _cache
+
+
+def clear_cache() -> int:
+    """Clear all cached responses"""
+    cache = get_cache()
+    return cache.clear()
+
+
+def clear_expired_cache() -> int:
+    """Clear only expired cached responses"""
+    cache = get_cache()
+    return cache.clear_expired()
+
+
+def get_cache_stats() -> Dict[str, Any]:
+    """Get cache statistics"""
+    cache = get_cache()
+    return cache.get_stats()
+
 
 # Made with Bob
