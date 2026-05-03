@@ -1,0 +1,94 @@
+/* Loading State Component Styles */
+
+.loading-fullpage {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.9);
+  z-index: 9999;
+}
+
+.loading-default {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 24px;
+  min-height: 200px;
+}
+
+.loading-description {
+  margin-top: 16px;
+  color: #525252;
+  font-size: 14px;
+  text-align: center;
+}
+
+.loading-skeleton {
+  padding: 24px;
+  animation: fadeIn 0.3s ease-in;
+}
+
+.skeleton-chart {
+  height: 200px;
+  margin-top: 24px;
+}
+
+.loading-card-skeleton {
+  padding: 16px;
+  background: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  animation: fadeIn 0.3s ease-in;
+}
+
+.skeleton-card-content {
+  height: 120px;
+  margin-top: 16px;
+}
+
+.loading-table-skeleton {
+  padding: 16px;
+  animation: fadeIn 0.3s ease-in;
+}
+
+.skeleton-row {
+  padding: 12px 0;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.skeleton-row:last-child {
+  border-bottom: none;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Pulse animation for skeletons */
+.loading-skeleton,
+.loading-card-skeleton,
+.loading-table-skeleton {
+  animation: fadeIn 0.3s ease-in, pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+/* Made with Bob */

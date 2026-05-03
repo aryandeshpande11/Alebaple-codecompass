@@ -67,11 +67,11 @@ async def analyze_project(project_id: str, background_tasks: BackgroundTasks):
         )
     
     # Check if project has a repository URL
-    repo_url = project.get("repository_url")
+    repo_url = project.get("github_url")
     if not repo_url:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Project does not have a repository URL"
+            detail="Project does not have a GitHub repository URL"
         )
     
     # Update project status to analyzing

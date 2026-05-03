@@ -14,15 +14,19 @@ import {
   Breadcrumb,
   BreadcrumbItem
 } from '@carbon/react'
-import { 
+import {
   ArrowLeft,
   Renew,
-  Download
+  Download,
+  DocumentExport
 } from '@carbon/icons-react'
 import Dashboard from '../components/Dashboard'
 import CodeViewer from '../components/CodeViewer'
 import ExplanationPanel from '../components/ExplanationPanel'
+import FileTree from '../components/FileTree'
+import LoadingState from '../components/LoadingState'
 import { projectAPI, analysisAPI, aiAPI } from '../services/api'
+import { exportAsMarkdown, exportAsJSON, exportAsHTML, printReport } from '../utils/exportUtils'
 import './AnalysisPage.css'
 
 function AnalysisPage() {
@@ -103,6 +107,13 @@ function AnalysisPage() {
       setAiLoading(true)
       setAiError(null)
 
+      // Check if file has content
+      if (!file.content || file.content.trim() === '' || file.content.startsWith('// Error reading file')) {
+        setAiError('File content is not available or could not be read from the repository.')
+        setAiLoading(false)
+        return
+      }
+
       const response = await aiAPI.explainFile(
         file.path,
         file.content,
@@ -120,7 +131,30 @@ function AnalysisPage() {
       })
     } catch (err) {
       console.error('Error getting AI explanation:', err)
-      setAiError(err.response?.data?.detail || err.message || 'Failed to get AI explanation')
+      
+      // Handle different error formats
+      let errorMessage = 'Failed to get AI explanation'
+      
+      if (err.response?.data) {
+        const data = err.response.data
+        
+        // Handle validation errors (array of error objects)
+        if (Array.isArray(data.detail)) {
+          errorMessage = data.detail.map(e => e.msg || JSON.stringify(e)).join(', ')
+        }
+        // Handle string detail
+        else if (typeof data.detail === 'string') {
+          errorMessage = data.detail
+        }
+        // Handle object detail
+        else if (typeof data.detail === 'object') {
+          errorMessage = JSON.stringify(data.detail)
+        }
+      } else if (err.message) {
+        errorMessage = err.message
+      }
+      
+      setAiError(errorMessage)
     } finally {
       setAiLoading(false)
     }
@@ -139,9 +173,11 @@ function AnalysisPage() {
   if (loading) {
     return (
       <div className="analysis-page">
-        <div className="loading-container">
-          <InlineLoading description="Loading project data..." />
-        </div>
+        <LoadingState
+          type="fullpage"
+          message="Loading project data..."
+          description="Please wait while we fetch your analysis results"
+        />
       </div>
     )
   }
@@ -184,11 +220,31 @@ function AnalysisPage() {
             <div className="header-content">
               <div className="header-info">
                 <h1 className="page-title">{project?.name || 'Project Analysis'}</h1>
-                {project?.repository_url && (
-                  <p className="project-url">{project.repository_url}</p>
+                {project?.github_url && (
+                  <p className="project-url">{project.github_url}</p>
                 )}
               </div>
               <div className="header-actions">
+                <Button
+                  kind="ghost"
+                  size="sm"
+                  renderIcon={Download}
+                  onClick={() => exportAsMarkdown(project, analysis)}
+                  disabled={!analysis}
+                  hasIconOnly
+                  iconDescription="Export as Markdown"
+                  tooltipPosition="bottom"
+                />
+                <Button
+                  kind="ghost"
+                  size="sm"
+                  renderIcon={DocumentExport}
+                  onClick={() => exportAsHTML(project, analysis)}
+                  disabled={!analysis}
+                  hasIconOnly
+                  iconDescription="Export as HTML"
+                  tooltipPosition="bottom"
+                />
                 <Button
                   kind="tertiary"
                   size="sm"
@@ -251,19 +307,16 @@ function AnalysisPage() {
                     <Grid className="code-explorer-grid">
                       <Column lg={6} md={4} sm={4}>
                         <div className="file-list-container">
-                          <h4 className="section-subtitle">Files</h4>
-                          <div className="file-list">
-                            {analysis.files && analysis.files.map((file, index) => (
-                              <button
-                                key={index}
-                                className={`file-item ${selectedFile?.path === file.path ? 'active' : ''}`}
-                                onClick={() => handleFileSelect(file)}
-                              >
-                                <span className="file-name">{file.path}</span>
-                                <span className="file-lines">{file.lines} lines</span>
-                              </button>
-                            ))}
-                          </div>
+                          <h4 className="section-subtitle">File Explorer</h4>
+                          <FileTree
+                            files={analysis.files || []}
+                            onFileSelect={(file) => handleFileSelect({
+                              ...file,
+                              path: file.file_path || file.path,
+                              lines: file.metrics?.raw?.loc || file.lines || 0
+                            })}
+                            selectedFile={selectedFile}
+                          />
                         </div>
                       </Column>
                       <Column lg={10} md={4} sm={4}>

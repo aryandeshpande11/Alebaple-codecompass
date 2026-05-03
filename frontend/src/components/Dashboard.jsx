@@ -1,16 +1,17 @@
-import { 
-  Tile, 
-  Grid, 
+import {
+  Tile,
+  Grid,
   Column,
   SkeletonText,
   SkeletonPlaceholder
 } from '@carbon/react'
-import { 
-  Code, 
-  Document, 
-  Function, 
-  DataClass 
+import {
+  Code,
+  Document,
+  Function,
+  DataClass
 } from '@carbon/icons-react'
+import ComplexityChart from './ComplexityChart'
 import './Dashboard.css'
 
 function Dashboard({ analysis, loading }) {
@@ -58,7 +59,10 @@ function Dashboard({ analysis, loading }) {
   }
 
   const summary = analysis.summary || {}
-  const languageStats = analysis.language_stats || {}
+  const languages = summary.languages || {}
+  
+  // Calculate total lines from metrics
+  const totalLines = summary.total_lloc || summary.total_sloc || summary.loc || 0
 
   return (
     <div className="dashboard-container">
@@ -81,7 +85,7 @@ function Dashboard({ analysis, loading }) {
               <Code size={32} />
             </div>
             <div className="metric-content">
-              <h4 className="metric-value">{summary.total_lines?.toLocaleString() || 0}</h4>
+              <h4 className="metric-value">{totalLines?.toLocaleString() || 0}</h4>
               <p className="metric-label">Lines of Code</p>
             </div>
           </Tile>
@@ -112,22 +116,33 @@ function Dashboard({ analysis, loading }) {
         </Column>
       </Grid>
 
-      {Object.keys(languageStats).length > 0 && (
-        <div className="language-stats">
-          <Tile>
-            <h4 className="section-title">Language Distribution</h4>
-            <div className="language-list">
-              {Object.entries(languageStats).map(([language, stats]) => (
-                <div key={language} className="language-item">
-                  <span className="language-name">{language}</span>
-                  <span className="language-count">{stats.file_count} files</span>
-                  <span className="language-lines">{stats.total_lines?.toLocaleString()} lines</span>
+      <Grid className="dashboard-charts">
+        <Column lg={8} md={8} sm={4}>
+          {Object.keys(languages).length > 0 && (
+            <div className="language-stats">
+              <Tile>
+                <h4 className="section-title">Language Distribution</h4>
+                <div className="language-list">
+                  {Object.entries(languages).map(([language, count]) => {
+                    // Ensure count is a number, not an object
+                    const fileCount = typeof count === 'number' ? count : (count?.count || 0)
+                    return (
+                      <div key={language} className="language-item">
+                        <span className="language-name">{String(language)}</span>
+                        <span className="language-count">{fileCount} {fileCount === 1 ? 'file' : 'files'}</span>
+                      </div>
+                    )
+                  })}
                 </div>
-              ))}
+              </Tile>
             </div>
-          </Tile>
-        </div>
-      )}
+          )}
+        </Column>
+
+        <Column lg={8} md={8} sm={4}>
+          <ComplexityChart files={analysis.files || []} />
+        </Column>
+      </Grid>
     </div>
   )
 }

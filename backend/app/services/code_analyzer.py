@@ -196,15 +196,32 @@ class CodeAnalyzer:
             }
     
     def _combine_file_data(
-        self, 
-        parsed_files: list[dict[str, Any]], 
+        self,
+        parsed_files: list[dict[str, Any]],
         file_metrics: list[dict[str, Any]]
     ) -> list[dict[str, Any]]:
         """Combine parsed data and metrics for each file."""
         combined = []
         for parsed, metrics in zip(parsed_files, file_metrics):
+            # Read file content
+            file_path = parsed.get("file_path", "")
+            content = ""
+            language = parsed.get("language", "plaintext")
+            
+            try:
+                if file_path:
+                    from pathlib import Path
+                    path_obj = Path(file_path)
+                    if path_obj.exists():
+                        with open(path_obj, 'r', encoding='utf-8') as f:
+                            content = f.read()
+            except Exception as e:
+                content = f"// Error reading file: {str(e)}"
+            
             combined.append({
-                "file_path": parsed["file_path"],
+                "file_path": file_path,
+                "content": content,
+                "language": language,
                 "has_error": "error" in parsed or "error" in metrics,
                 "error": parsed.get("error") or metrics.get("error"),
                 "structure": {

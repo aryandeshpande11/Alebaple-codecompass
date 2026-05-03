@@ -144,13 +144,19 @@ function ExplanationPanel({ explanation, loading, onRefresh, error }) {
             <div className="explanation-section">
               <h5 className="section-title">Complexity Analysis</h5>
               <div className="complexity-info">
-                <Tag type={
-                  explanation.complexity.level === 'low' ? 'green' :
-                  explanation.complexity.level === 'medium' ? 'blue' : 'red'
-                }>
-                  {explanation.complexity.level.toUpperCase()}
-                </Tag>
-                <p className="section-text">{explanation.complexity.description}</p>
+                {typeof explanation.complexity === 'object' && explanation.complexity.level ? (
+                  <>
+                    <Tag type={
+                      explanation.complexity.level === 'low' ? 'green' :
+                      explanation.complexity.level === 'medium' ? 'blue' : 'red'
+                    }>
+                      {explanation.complexity.level.toUpperCase()}
+                    </Tag>
+                    <p className="section-text">{explanation.complexity.description || ''}</p>
+                  </>
+                ) : (
+                  <p className="section-text">{String(explanation.complexity)}</p>
+                )}
               </div>
             </div>
           )}

@@ -26,6 +26,9 @@ function CodeViewer({ file, onExplainRequest, theme }) {
   }
 
   const getLanguage = (filePath) => {
+    if (!filePath || typeof filePath !== 'string') {
+      return 'plaintext'
+    }
     const ext = filePath.split('.').pop().toLowerCase()
     const languageMap = {
       'py': 'python',

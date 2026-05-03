@@ -25,7 +25,7 @@ function UploadForm({ onAnalysisStart }) {
       // Create project
       const project = await projectAPI.create({
         name: projectName || 'Untitled Project',
-        repository_url: githubUrl,
+        github_url: githubUrl,
         description: `Analysis of ${githubUrl}`,
       })
 

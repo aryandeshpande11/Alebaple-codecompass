@@ -72,9 +72,18 @@
   margin-top: 1rem;
 }
 
+/* Dashboard Charts Section */
+.dashboard-charts {
+  margin-top: 2rem;
+}
+
 /* Language Statistics Section */
 .language-stats {
-  margin-top: 2rem;
+  height: 100%;
+}
+
+.language-stats .cds--tile {
+  height: 100%;
 }
 
 .section-title {

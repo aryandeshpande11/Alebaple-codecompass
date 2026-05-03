@@ -113,10 +113,15 @@ export const aiAPI = {
 
   // Explain entire file
   explainFile: async (filePath, code, language) => {
+    // Normalize language to match backend validation
+    const normalizedLanguage = language?.toLowerCase() || 'python'
+    const validLanguages = ['python', 'java', 'javascript', 'typescript']
+    const finalLanguage = validLanguages.includes(normalizedLanguage) ? normalizedLanguage : 'python'
+    
     const response = await api.post('/ai/explain-file', {
       file_path: filePath,
-      code,
-      language,
+      file_content: code,  // Backend expects 'file_content', not 'code'
+      language: finalLanguage,
     })
     return response.data
   },

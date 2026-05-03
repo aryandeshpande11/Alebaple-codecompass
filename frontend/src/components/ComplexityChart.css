@@ -1,0 +1,172 @@
+/* Complexity Chart Component Styles */
+
+.complexity-chart {
+  padding: 24px;
+}
+
+.chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.chart-header h4 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #161616;
+}
+
+.total-files {
+  font-size: 14px;
+  color: #525252;
+  background: #f4f4f4;
+  padding: 4px 12px;
+  border-radius: 12px;
+}
+
+.complexity-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.complexity-row {
+  display: grid;
+  grid-template-columns: 140px 1fr 60px;
+  align-items: center;
+  gap: 12px;
+}
+
+.complexity-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: #161616;
+}
+
+.icon-low {
+  color: #24a148;
+}
+
+.icon-medium {
+  color: #0f62fe;
+}
+
+.icon-high {
+  color: #f1c21b;
+}
+
+.icon-very-high {
+  color: #da1e28;
+}
+
+.complexity-bar-container {
+  height: 32px;
+  background: #f4f4f4;
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+}
+
+.complexity-bar {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 8px;
+  transition: width 0.5s ease;
+  min-width: 40px;
+}
+
+.complexity-bar.low {
+  background: linear-gradient(90deg, #24a148 0%, #42be65 100%);
+}
+
+.complexity-bar.medium {
+  background: linear-gradient(90deg, #0f62fe 0%, #4589ff 100%);
+}
+
+.complexity-bar.high {
+  background: linear-gradient(90deg, #f1c21b 0%, #fddc69 100%);
+}
+
+.complexity-bar.very-high {
+  background: linear-gradient(90deg, #da1e28 0%, #fa4d56 100%);
+}
+
+.bar-label {
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 600;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.complexity-percentage {
+  font-size: 14px;
+  font-weight: 600;
+  color: #161616;
+  text-align: right;
+}
+
+.complexity-summary {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  padding-top: 24px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.summary-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.summary-label {
+  font-size: 12px;
+  color: #525252;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.summary-value {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.summary-value.good {
+  color: #24a148;
+}
+
+.summary-value.warning {
+  color: #f1c21b;
+}
+
+.no-data {
+  text-align: center;
+  color: #8d8d8d;
+  padding: 48px 24px;
+  font-size: 14px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .complexity-row {
+    grid-template-columns: 120px 1fr 50px;
+    gap: 8px;
+  }
+
+  .complexity-label {
+    font-size: 12px;
+  }
+
+  .complexity-summary {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Made with Bob */

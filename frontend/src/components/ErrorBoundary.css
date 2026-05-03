@@ -1,0 +1,50 @@
+/* Error Boundary Component Styles */
+
+.error-boundary {
+  min-height: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.error-boundary-content {
+  max-width: 600px;
+  width: 100%;
+}
+
+.error-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 16px;
+  flex-wrap: wrap;
+}
+
+.error-details {
+  margin-top: 24px;
+  padding: 16px;
+  background: #f4f4f4;
+  border-radius: 4px;
+  border: 1px solid #e0e0e0;
+}
+
+.error-details summary {
+  cursor: pointer;
+  font-weight: 500;
+  color: #161616;
+  margin-bottom: 12px;
+}
+
+.error-details pre {
+  margin: 0;
+  padding: 12px;
+  background: #ffffff;
+  border-radius: 4px;
+  overflow-x: auto;
+  font-size: 12px;
+  color: #525252;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+/* Made with Bob */
