@@ -1,0 +1,66 @@
+.performance-monitor {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1000;
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 8px 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.performance-indicator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.status-dot.healthy {
+  background-color: #24a148;
+}
+
+.status-dot.degraded {
+  background-color: #ff832b;
+}
+
+.status-dot.error {
+  background-color: #da1e28;
+}
+
+.response-time {
+  font-family: 'IBM Plex Mono', monospace;
+  color: #161616;
+  font-weight: 500;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@media (max-width: 672px) {
+  .performance-monitor {
+    bottom: 10px;
+    right: 10px;
+    padding: 6px 12px;
+    font-size: 11px;
+  }
+}
+
+/* Made with Bob */

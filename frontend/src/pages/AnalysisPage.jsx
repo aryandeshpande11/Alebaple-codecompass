@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { 
-  Grid, 
+import {
+  Grid,
   Column,
   Tabs,
   TabList,
@@ -12,7 +12,8 @@ import {
   InlineLoading,
   InlineNotification,
   Breadcrumb,
-  BreadcrumbItem
+  BreadcrumbItem,
+  Tile
 } from '@carbon/react'
 import {
   ArrowLeft,
@@ -25,6 +26,7 @@ import CodeViewer from '../components/CodeViewer'
 import ExplanationPanel from '../components/ExplanationPanel'
 import FileTree from '../components/FileTree'
 import LoadingState from '../components/LoadingState'
+import DependencyGraph from '../components/DependencyGraph'
 import { projectAPI, analysisAPI, aiAPI } from '../services/api'
 import { exportAsMarkdown, exportAsJSON, exportAsHTML, printReport } from '../utils/exportUtils'
 import './AnalysisPage.css'
@@ -294,6 +296,7 @@ function AnalysisPage() {
                 <TabList aria-label="Analysis tabs">
                   <Tab>Overview</Tab>
                   <Tab>Code Explorer</Tab>
+                  <Tab>Dependencies</Tab>
                   <Tab>AI Insights</Tab>
                 </TabList>
                 <TabPanels>
@@ -329,16 +332,41 @@ function AnalysisPage() {
                     </Grid>
                   </TabPanel>
 
+                  {/* Dependencies Tab */}
+                  <TabPanel>
+                    <Grid>
+                      <Column lg={16} md={8} sm={4}>
+                        <DependencyGraph files={analysis.files || []} />
+                      </Column>
+                    </Grid>
+                  </TabPanel>
+
                   {/* AI Insights Tab */}
                   <TabPanel>
                     <Grid>
                       <Column lg={16} md={8} sm={4}>
-                        <ExplanationPanel
-                          explanation={explanation}
-                          loading={aiLoading}
-                          error={aiError}
-                          onRefresh={() => selectedFile && handleExplainRequest(selectedFile)}
-                        />
+                        {!selectedFile && (
+                          <div className="ai-prompt">
+                            <Tile className="prompt-tile">
+                              <h4>Get AI-Powered Code Insights</h4>
+                              <p>Select a file from the Code Explorer tab to get detailed AI analysis including:</p>
+                              <ul>
+                                <li>Comprehensive code explanation</li>
+                                <li>Complexity metrics and visualizations</li>
+                                <li>Best practices recommendations</li>
+                                <li>Potential improvements</li>
+                              </ul>
+                            </Tile>
+                          </div>
+                        )}
+                        {selectedFile && (
+                          <ExplanationPanel
+                            explanation={explanation}
+                            loading={aiLoading}
+                            error={aiError}
+                            onRefresh={() => selectedFile && handleExplainRequest(selectedFile)}
+                          />
+                        )}
                       </Column>
                     </Grid>
                   </TabPanel>

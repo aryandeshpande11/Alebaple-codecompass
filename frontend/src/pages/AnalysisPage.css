@@ -448,6 +448,114 @@
   }
 }
 
+/* AI Prompt Section */
+.ai-prompt {
+  width: 100%;
+  margin-top: 2rem;
+}
+
+.prompt-tile {
+  padding: 2rem;
+  text-align: center;
+  background: linear-gradient(135deg, var(--cds-layer-01) 0%, var(--cds-layer-02) 100%);
+  border: 2px dashed var(--cds-border-subtle-01);
+}
+
+.prompt-tile h4 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--cds-text-01);
+  margin: 0 0 1rem 0;
+}
+
+.prompt-tile p {
+  font-size: 1rem;
+  color: var(--cds-text-02);
+  margin: 0 0 1.5rem 0;
+  line-height: 1.6;
+}
+
+.prompt-tile ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: inline-block;
+  text-align: left;
+}
+
+.prompt-tile li {
+  font-size: 0.875rem;
+  color: var(--cds-text-02);
+  padding: 0.5rem 0;
+  padding-left: 1.5rem;
+  position: relative;
+}
+
+.prompt-tile li::before {
+  content: '✓';
+  position: absolute;
+  left: 0;
+  color: var(--cds-interactive-01);
+  font-weight: bold;
+}
+
+/* Improved Tab Styling */
+.page-content .cds--tabs {
+  background: transparent;
+}
+
+.page-content .cds--tab-content {
+  padding: 2rem 0;
+}
+
+/* Better spacing for grid items */
+.code-explorer-grid {
+  gap: 1.5rem;
+}
+
+.file-list-container {
+  height: calc(100vh - 400px);
+  min-height: 500px;
+  display: flex;
+  flex-direction: column;
+}
+
+.section-subtitle {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--cds-text-01);
+  margin: 0 0 1rem 0;
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid var(--cds-interactive-01);
+}
+
+/* Improved responsive behavior */
+@media (max-width: 1056px) {
+  .file-list-container {
+    height: auto;
+    min-height: 300px;
+    margin-bottom: 2rem;
+  }
+
+  .code-explorer-grid {
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 672px) {
+  .prompt-tile {
+    padding: 1.5rem;
+  }
+
+  .prompt-tile h4 {
+    font-size: 1.125rem;
+  }
+
+  .page-content .cds--tab-content {
+    padding: 1rem 0;
+  }
+}
+
 /* Made with Bob - Enterprise Edition */
 
 /* Made with Bob */

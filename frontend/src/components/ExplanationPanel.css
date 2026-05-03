@@ -310,3 +310,63 @@
 /* Made with Bob - Enterprise Edition */
 
 /* Made with Bob */
+
+/* Explanation Panel - Professional Enterprise Styling */
+.explanation-panel {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Bullet and numbered items */
+.bullet-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.5rem 0;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: var(--cds-text-02);
+}
+
+.bullet-icon {
+  color: var(--cds-interactive-01);
+  flex-shrink: 0;
+  margin-top: 0.125rem;
+}
+
+.numbered-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.5rem 0;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: var(--cds-text-02);
+}
+
+.numbered-item .number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px;
+  height: 24px;
+  background: var(--cds-interactive-01);
+  color: white;
+  border-radius: 50%;
+  font-weight: 600;
+  font-size: 0.75rem;
+  flex-shrink: 0;
+}
+
+.section-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.section-content strong {
+  color: var(--cds-text-01);
+  font-weight: 600;
+}
